@@ -10,8 +10,8 @@ here = os.path.abspath(os.path.dirname(__file__))
 with io.open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = '\n' + f.read()
 
-with open('requirements.txt') as f:
-    required = f.read().splitlines()
+# with open('requirements.txt') as f:
+#     required = f.read().splitlines()
 
 
 setup(
@@ -39,6 +39,6 @@ setup(
         'Programming Language :: Python :: Implementation :: PyPy',
         'License :: OSI Approved :: Apache Software License'
     ],
-    install_requires=required,
+    # install_requires=required,
     include_package_data=True,
 )

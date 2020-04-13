@@ -1,5 +1,6 @@
 import math
 import os
+from datetime import datetime, timezone
 
 from playhouse.shortcuts import model_to_dict
 from sanic import Sanic
@@ -75,15 +76,15 @@ async def api_v1_proxies(request: Request):
 
     if is_anonymous != 2:
         if is_anonymous == 1:
-            proxy_query = proxy_initial_query.where(ProxyIP.is_anonymous == True)
+            proxy_query = proxy_query.where(ProxyIP.is_anonymous == True)
         elif is_anonymous == 0:
-            proxy_query = proxy_initial_query.where(ProxyIP.is_anonymous == False)
+            proxy_query = proxy_query.where(ProxyIP.is_anonymous == False)
 
     if str_https:
         if str_https == 'true':
-            proxy_query = proxy_initial_query.where(ProxyIP.is_https == True)
+            proxy_query = proxy_query.where(ProxyIP.is_https == True)
         elif str_https == 'false':
-            proxy_query = proxy_initial_query.where(ProxyIP.is_https == False)
+            proxy_query = proxy_query.where(ProxyIP.is_https == False)
 
     if country_list and len(country_list) > 0:
         proxy_query = proxy_query.where(ProxyIP.country << country_list)
@@ -97,7 +98,12 @@ async def api_v1_proxies(request: Request):
     proxy_list = []
 
     for p in proxies:
-        proxy_list.append(model_to_dict(p))
+        d = model_to_dict(p)
+        if d['created_at']:
+            d['created_at'] = d['created_at'].timestamp()
+        if d['updated_at']:
+            d['updated_at'] = d['updated_at'].timestamp()
+        proxy_list.append(d)
 
     return json({
         'proxies': proxy_list,
